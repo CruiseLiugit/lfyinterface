@@ -50,7 +50,7 @@ public class BaiduMapBiz {
 		String jsonStr = "";
 		
 		String url = Constants.RADIUSSEARCH_URL+"?&query="+query+"&location="+lng+","+lat+"&radius="+Constants.RADIUS+"&output=json&ak="+Constants.AK;
-		//log.info("查询的 URL 为 :"+url);
+		log.info("查询的 URL 为 :"+url);
 		
 		try {
 			jsonStr=httpService.doGet(url);

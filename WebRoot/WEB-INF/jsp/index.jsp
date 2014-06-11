@@ -19,15 +19,12 @@
 	<h1>门店地图</h1>
 	<ul>
 		<li><h1 id="login_status">查询门店接口</h1>
-			<p>http://localhost:8080/lfyinterface/searchStoreByStreet?paraData={"cityName":"上海","areaName":"徐汇"}</p>
+			<p>http://localhost:8080/lfyinterface/searchStoreByStreet?cityName=上海&areaName=徐汇</p>
 		</li>
 		<li><h1 id="login_status">查询用户是否可以配送接口</h1>
-			<p>http://localhost:8080/lfyinterface/searchStoreByCustomer?paraData={"addressCode":"132456555555"}</p>
+			<p>http://localhost:8080/lfyinterface/searchStoreByAddressCode?addressCode=43ee065f-85d7-4ef1-bb04-20ee796fa73b</p>
 		</li>
 	</ul>
-	
-	
-	
-	
+
   </body>
 </html>

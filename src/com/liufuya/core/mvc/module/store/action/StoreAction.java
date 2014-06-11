@@ -51,12 +51,13 @@ public class StoreAction {
 	 * 接口一:查询门店接口，查询数据库
 	 */
 	@At("/searchStoreByStreet")
-	//@Ok("json")
-	public void searchStoreByStreet(@Param("paraData") String paraData,HttpServletResponse response) {
+	// @Ok("json")
+	public void searchStoreByStreet(@Param("cityName") String cityName,
+			@Param("areaName") String areaName, HttpServletResponse response) {
 		// 根据城市名称和 县区名称，到数据库查询
-		String  json = this.storeService.getStoreAddressList(paraData);
-		log.info("====> json ="+json);
-	
+		String json = this.storeService.getStoreAddressList(cityName, areaName);
+		log.info("====> json =" + json);
+
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
@@ -64,19 +65,52 @@ public class StoreAction {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally{
-			if (out!=null) {
+		} finally {
+			if (out != null) {
 				out.close();
 			}
 		}
-		
-		//return json;
+
+		// return json;
 	}
 
 	// ************************************************************************************
 	/**
-	 * 接口二:查询用户是否可以配送接口，查询百度地图
+	 * 接口二: 根据会员地址表中的 address_code ，查询会员地址，并判断该地址周边是否有门店能够配送
+	 * 返回查询结果
 	 */
+	@At("/searchStoreByAddressCode")
+	// @Ok("json")
+	public void searchStoreByAddressCode(@Param("addressCode") String addressCode,
+			HttpServletResponse response) {
+		// 根据城市名称和 县区名称，到数据库查询
+		String json = this.storeService.getStoreByAddressCode(addressCode);
+		log.info("====> json =" + json);
+
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			out.print(json);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				out.close();
+			}
+		}
+
+	}
+
+	// ---------------------------------------------------------------------
+	// ************************************************************************************
+	/**
+	 * 作废   接口二:查询用户是否可以配送接口，查询百度地图
+	 * 接收 json 格式参数
+	 * http://localhost:8080/lfyinterface/searchStoreByCustomer?paraData={"addressCode":"132456555555"}
+	 */
+	// ------------------------------------------------------------------------------------
+	// 接收 json 格式参数的方法。HttpClient 无法读取，这个方法zuo fe
 	@At("/searchStoreByCustomer")
 	@Ok("json")
 	public String searchStoreByCustomer(@Param("paraData") String paraData) {
