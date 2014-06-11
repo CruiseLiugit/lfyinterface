@@ -39,10 +39,7 @@ public class BaseAction {
 	}
 	
 	//-------------------index.jsp 页面跳转---------------------------
-	//门店地图
-	@At("/map1")
-	@Ok("jsp:store.map1")
-	public void map1() {}
+	
 	
 	
 }
