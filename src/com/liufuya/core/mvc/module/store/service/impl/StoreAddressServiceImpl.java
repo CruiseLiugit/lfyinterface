@@ -187,4 +187,35 @@ public class StoreAddressServiceImpl {
 		return Json.toJson(bean, JsonFormat.nice());
 	}
 
+	
+	//----------------------------------------------------------------------------
+	/**
+	 * 接口三、根据门店编号，到数据库查询门店对象
+	 * @param storeCode  门店编号
+	 * @return
+	 */
+	public String getStoreByStoreCode(String storeCode){
+		StoreAddress store = this.storeDao.getStoreByStoreCode(storeCode);
+		
+		ReturnJsonBean bean = new ReturnJsonBean();
+		List<StoreAddress> list = new ArrayList<StoreAddress>();
+		if (store !=null ) {
+			bean.setStatus("200");
+			bean.setInfo("查询成功");
+			list.add(store);
+			bean.setResults(list);
+		}else {
+			bean.setStatus("404");
+			bean.setInfo("目前没有门店数据");
+			bean.setResults(list);
+		}
+		
+		return Json.toJson(bean, JsonFormat.nice());
+	} 
+	
+	
+	
+	
+	
+	
 }

@@ -80,7 +80,6 @@ public class StoreDaoImpl extends BasicDao {
 	}
 
 	// -------------------------------------------------------------
-
 	/**
 	 * 接口二、通过lfy_member_address 表中的 address_code 获取会员地址对象
 	 */
@@ -153,5 +152,15 @@ public class StoreDaoImpl extends BasicDao {
 		return this.update(addressBean);
 	}
 	
+	
+	// -------------------------------------------------------------
+		/**
+		 * 接口三、通过 lfy_store_address 表中的 store_code 获取门店对象
+		 */
+		public StoreAddress getStoreByStoreCode(String storeCode) {
+			Cnd condition = Cnd.where("store_code", "=", storeCode).and(
+					"status", "=", "1");
+			return findByCondition(StoreAddress.class, condition);
+		}
 	
 }

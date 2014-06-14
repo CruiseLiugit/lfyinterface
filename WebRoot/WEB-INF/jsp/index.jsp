@@ -18,11 +18,14 @@
     <!-- 该页面所有 请求，由 com.liufuya.core.mvc.module.store.action.StoreAction.java 处理 -->
 	<h1>门店地图</h1>
 	<ul>
-		<li><h1 id="login_status">查询门店接口</h1>
+		<li><h1 id="login_status">接口一:查询门店接口</h1>
 			<p>http://localhost:8080/lfyinterface/searchStoreByStreet?cityName=上海&areaName=徐汇</p>
 		</li>
-		<li><h1 id="login_status">查询用户是否可以配送接口</h1>
+		<li><h1 id="login_status">接口二:查询用户是否可以配送接口</h1>
 			<p>http://localhost:8080/lfyinterface/searchStoreByAddressCode?addressCode=43ee065f-85d7-4ef1-bb04-20ee796fa73b</p>
+		</li>
+		<li><h1 id="login_status">接口三:查询用户是否可以配送接口</h1>
+			<p>http://localhost:8080/lfyinterface/searchStoreByStoreCode?storeCode=020119</p>
 		</li>
 	</ul>
 

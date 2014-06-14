@@ -101,6 +101,34 @@ public class StoreAction {
 		}
 
 	}
+	
+	
+	// ************************************************************************************
+		/**
+		 * 接口三: 根据门店编号，获取门店详细信息
+		 */
+		@At("/searchStoreByStoreCode")
+		public void searchStoreByStoreCode(@Param("storeCode") String storeCode,
+				HttpServletResponse response) {
+			// 根据门店编号，到数据库查询门店对象
+			String json = this.storeService.getStoreByStoreCode(storeCode);
+			log.info("====> json =" + json);
+
+			PrintWriter out = null;
+			try {
+				out = response.getWriter();
+				out.print(json);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (out != null) {
+					out.close();
+				}
+			}
+
+		}
+	
 
 	// ---------------------------------------------------------------------
 	// ************************************************************************************
