@@ -72,9 +72,10 @@ public class BaiduMapBiz {
 		////http://api.map.baidu.com/location/ip?ak=密钥&ip=202.198.16.3&coor=bd09ll
 		// 解析地址,使用 get 方法提交请求
 		String url = Constants.IPURL+ "?ak="+Constants.AK+"&ip=" + ipaddress + "&coor="+Constants.COOR;
+		log.info("ip  url ="+url);
 		try {
 			jsonStr = httpService.doGet(url);
-			log.debug("BaiduMapBiz  json =" + jsonStr);
+			log.debug("ip  json =" + jsonStr);
 		} catch (Exception e) {
 			throw new Exception("网络连接失败！");
 		}

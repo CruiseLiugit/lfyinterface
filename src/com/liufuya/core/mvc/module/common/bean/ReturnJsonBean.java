@@ -16,6 +16,10 @@ public class ReturnJsonBean {
 	// 接口二
 	private String code;// 表示配送范围结果，1 表示可以配送，0 表示不能配送
 	private String result; // 执行结果 ,接口二 返回数据
+	
+	//接口四，根据 ip 查城市
+	private String province; //省份
+	private String city; //城市名称
 
 	public String getCode() {
 		return code;
@@ -57,4 +61,23 @@ public class ReturnJsonBean {
 		this.result = result;
 	}
 
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	
+	
+	
 }

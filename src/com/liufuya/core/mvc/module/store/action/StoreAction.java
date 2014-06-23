@@ -56,7 +56,7 @@ public class StoreAction {
 			@Param("areaName") String areaName, HttpServletResponse response) {
 		// 根据城市名称和 县区名称，到数据库查询
 		String json = this.storeService.getStoreAddressList(cityName, areaName);
-		log.info("====> json =" + json);
+		//log.info("====> json =" + json);
 
 		PrintWriter out = null;
 		try {
@@ -76,16 +76,16 @@ public class StoreAction {
 
 	// ************************************************************************************
 	/**
-	 * 接口二: 根据会员地址表中的 address_code ，查询会员地址，并判断该地址周边是否有门店能够配送
-	 * 返回查询结果
+	 * 接口二: 根据会员地址表中的 address_code ，查询会员地址，并判断该地址周边是否有门店能够配送 返回查询结果
 	 */
 	@At("/searchStoreByAddressCode")
 	// @Ok("json")
-	public void searchStoreByAddressCode(@Param("addressCode") String addressCode,
+	public void searchStoreByAddressCode(
+			@Param("addressCode") String addressCode,
 			HttpServletResponse response) {
 		// 根据城市名称和 县区名称，到数据库查询
 		String json = this.storeService.getStoreByAddressCode(addressCode);
-		log.info("====> json =" + json);
+		//log.info("====> json =" + json);
 
 		PrintWriter out = null;
 		try {
@@ -101,68 +101,59 @@ public class StoreAction {
 		}
 
 	}
-	
-	
-	// ************************************************************************************
-		/**
-		 * 接口三: 根据门店编号，获取门店详细信息
-		 */
-		@At("/searchStoreByStoreCode")
-		public void searchStoreByStoreCode(@Param("storeCode") String storeCode,
-				HttpServletResponse response) {
-			// 根据门店编号，到数据库查询门店对象
-			String json = this.storeService.getStoreByStoreCode(storeCode);
-			log.info("====> json =" + json);
 
-			PrintWriter out = null;
-			try {
-				out = response.getWriter();
-				out.print(json);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (out != null) {
-					out.close();
-				}
-			}
-
-		}
-	
-
-	// ---------------------------------------------------------------------
 	// ************************************************************************************
 	/**
-	 * 作废   接口二:查询用户是否可以配送接口，查询百度地图
-	 * 接收 json 格式参数
-	 * http://localhost:8080/lfyinterface/searchStoreByCustomer?paraData={"addressCode":"132456555555"}
+	 * 接口三: 根据门店编号，获取门店详细信息
 	 */
-	// ------------------------------------------------------------------------------------
-	// 接收 json 格式参数的方法。HttpClient 无法读取，这个方法zuo fe
-	@At("/searchStoreByCustomer")
-	@Ok("json")
-	public String searchStoreByCustomer(@Param("paraData") String paraData) {
-		String data = "";
+	@At("/searchStoreByStoreCode")
+	public void searchStoreByStoreCode(@Param("storeCode") String storeCode,
+			HttpServletResponse response) {
+		// 根据门店编号，到数据库查询门店对象
+		String json = this.storeService.getStoreByStoreCode(storeCode);
+		//log.info("====> json =" + json);
+
+		PrintWriter out = null;
 		try {
-			data = new String(paraData.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		AddressBean dataobj = Json.fromJson(AddressBean.class, Lang.inr(data));
-		log.info("转换对象....... dataobj =" + dataobj);
-		log.info("转换对象....... dataobj =" + dataobj.getAddressCode());
-
-		// 根据地址 编码，到数据库查询得到地址，然后
-
-		String json = "";
-		try {
-
-		} catch (Exception e) {
+			out = response.getWriter();
+			out.print(json);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				out.close();
+			}
 		}
 
-		return json;
 	}
+
+	// ************************************************************************************
+	/**
+	 * 接口四: 根据用户 IP，获取用户所在城市，及该城市所有门店详细信息
+	 */
+	@At("/searchStoreByCityIP")
+	public void searchStoreByCityIP(@Param("ip") String ip,
+			HttpServletResponse response) {
+		// 根据门店编号，到数据库查询门店对象
+		String json = this.storeService.searchStoreByCityIP(ip);
+		//log.info("====> json =" + json);
+
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			out.print(json);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				out.close();
+			}
+		}
+
+	}
+
+	// ************************************************************************************
+	
 }

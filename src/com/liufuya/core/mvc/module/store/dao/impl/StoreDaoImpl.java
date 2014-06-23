@@ -27,7 +27,6 @@ import com.liufuya.core.mvc.module.BasicDao;
 import com.liufuya.core.mvc.module.store.model.MemberAddress;
 import com.liufuya.core.mvc.module.store.model.StoreAddress;
 
-
 /**
  * 菜单dao类
  * 
@@ -66,8 +65,8 @@ public class StoreDaoImpl extends BasicDao {
 					menu.setStore_address(rs.getString("store_address"));// 门店地址
 					menu.setStore_assistantphone(rs
 							.getString("store_assistantphone"));// 门店电话
-					menu.setGps_lng(rs.getString("gps_lng"));  //经度
-					menu.setGps_lat(rs.getString("gps_lat"));  //纬度
+					menu.setGps_lng(rs.getString("gps_lng")); // 经度
+					menu.setGps_lat(rs.getString("gps_lat")); // 纬度
 					list.add(menu);
 				}
 				return list;
@@ -101,37 +100,37 @@ public class StoreDaoImpl extends BasicDao {
 	 */
 	public List<StoreAddress> checkMemberAddressAround(
 			List<StoreAddress> storeList, MemberAddress addressBean) {
-		//返回数据
+		// 返回数据
 		List<StoreAddress> okStore = new ArrayList<StoreAddress>();
-		
+
 		if (storeList == null || addressBean == null) {
 			return null;
 		}
 
 		for (StoreAddress storeAddress : storeList) {
-			//log.info("==========门店 :"+storeAddress.getStore_name());
+			// log.info("==========门店 :"+storeAddress.getStore_name());
 			// 门店 坐标为中心
 			String lng = storeAddress.getGps_lng();
 			String lat = storeAddress.getGps_lat();
 			String member_address = addressBean.getAddress_keywords();
-			
-			String gejson = "";   //要返回的 json 字符串
-			
+
+			String gejson = ""; // 要返回的 json 字符串
+
 			try {
-				//1 查询出中心点坐标 上海东方明珠
-				//log.info("中心点，门店坐标  经度:"+lng+"  ,纬度:"+lat);
-				
-				//2 根据地址关键字，查询是否在中心点 3 公里范围内
-				gejson = baidu.getMapJsonRadiusByPost(member_address,lat.trim().intern(),lng.trim().intern());
-				//log.info("json 结果 ="+gejson);
-				//3 把百度查询返回的 json 字符串，转换为对象 
+				// 1 查询出中心点坐标 上海东方明珠
+				// log.info("中心点，门店坐标  经度:"+lng+"  ,纬度:"+lat);
+
+				// 2 根据地址关键字，查询是否在中心点 3 公里范围内
+				gejson = baidu.getMapJsonRadiusByPost(member_address, lat
+						.trim().intern(), lng.trim().intern());
+				// log.info("json 结果 ="+gejson);
+				// 3 把百度查询返回的 json 字符串，转换为对象
 				AddressBean bean = Json.fromJson(AddressBean.class, gejson);
-				if (bean.getResults().size() >0) {
-					//log.info("OK");
+				if (bean.getResults().size() > 0) {
+					// log.info("OK");
 					okStore.add(storeAddress);
 				}
-				
-				
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -142,25 +141,73 @@ public class StoreDaoImpl extends BasicDao {
 		return okStore;
 	}
 
-	
-	
 	/**
 	 * 接口二、更新数据库中的记录
+	 * 
 	 * @param addressBean
 	 */
-	public boolean updateMemeberAddress(MemberAddress addressBean){
+	public boolean updateMemeberAddress(MemberAddress addressBean) {
 		return this.update(addressBean);
 	}
-	
-	
+
 	// -------------------------------------------------------------
-		/**
-		 * 接口三、通过 lfy_store_address 表中的 store_code 获取门店对象
-		 */
-		public StoreAddress getStoreByStoreCode(String storeCode) {
-			Cnd condition = Cnd.where("store_code", "=", storeCode).and(
-					"status", "=", "1");
-			return findByCondition(StoreAddress.class, condition);
+	/**
+	 * 接口三、通过 lfy_store_address 表中的 store_code 获取门店对象
+	 */
+	public StoreAddress getStoreByStoreCode(String storeCode) {
+		Cnd condition = Cnd.where("store_code", "=", storeCode).and("status",
+				"=", "1");
+		return findByCondition(StoreAddress.class, condition);
+	}
+
+	// -------------------------------------------------------------
+	/**
+	 * 接口三、通过 lfy_store_address 表中的 store_code 获取门店对象
+	 */
+	public List<StoreAddress> getStoreByCity(String province ,String city) {
+		Sql sql = null;
+		if ("".equals(city)) {
+			sql = Sqls
+					.create("select * from lfy_store_address where province like '%"
+							+ province + "%' and status='1'");
+		}else{
+			sql = Sqls
+					.create("select * from lfy_store_address where city like '%"
+							+ city + "%' and status='1'");
 		}
-	
+		
+		// dao.execute(sql) 执行前，编写回调函数，解析 查询结果
+		sql.setCallback(new SqlCallback() {
+			public Object invoke(Connection conn, ResultSet rs, Sql sql)
+					throws SQLException {
+				List<StoreAddress> list = new LinkedList<StoreAddress>();
+				while (rs.next()) {
+					StoreAddress menu = new StoreAddress();
+					menu.setStore_code(rs.getString("store_code"));// 门店编码
+					menu.setStore_name(rs.getString("store_name"));// 门店名称
+					menu.setManage_type(rs.getString("manage_type"));// 经营类型
+					menu.setStore_type(rs.getString("store_type")); //店铺类型
+					menu.setDepart_own(rs.getString("depart_own")); //所属部门
+					menu.setProvince(rs.getString("province")); //省份
+					menu.setCity(rs.getString("city"));// 城市名
+					menu.setCity_id(rs.getInt("city_id")); // 城市表 id
+					menu.setCity_part(rs.getString("city_part"));// 县区
+					
+					menu.setStore_address(rs.getString("store_address"));// 门店地址
+					menu.setStore_assistantphone(rs
+							.getString("store_assistantphone"));// 门店电话
+					menu.setGps_lng(rs.getString("gps_lng")); // 经度
+					menu.setGps_lat(rs.getString("gps_lat")); // 纬度
+					list.add(menu);
+				}
+				return list;
+			}
+		});
+
+		dao.execute(sql);
+		return sql.getList(StoreAddress.class);
+		// Nutz内置了大量回调, 请查看Sqls.callback的属性
+	}
+	//
+
 }

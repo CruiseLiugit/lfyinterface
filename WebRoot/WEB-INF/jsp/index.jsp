@@ -27,6 +27,9 @@
 		<li><h1 id="login_status">接口三:查询用户是否可以配送接口</h1>
 			<p>http://localhost:8080/lfyinterface/searchStoreByStoreCode?storeCode=020119</p>
 		</li>
+		<li><h1 id="login_status">接口四:根据 ip 查询用户所在城市，及该城市所有门店</h1>
+			<p>http://localhost:8080/lfyinterface/searchStoreByCityIP?ip=115.29.12.128</p>
+		</li>
 	</ul>
 
   </body>

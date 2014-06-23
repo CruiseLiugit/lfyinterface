@@ -26,6 +26,7 @@ import org.nutz.log.Logs;
 import com.liufuya.common.Constants;
 import com.liufuya.core.map.BaiduMapBiz;
 import com.liufuya.core.map.jsonbean.Geocoding;
+import com.liufuya.core.map.jsonbean.IPAddress;
 import com.liufuya.core.mvc.module.common.bean.AvailableShopsBean;
 import com.liufuya.core.mvc.module.common.bean.ReturnJsonBean;
 import com.liufuya.core.mvc.module.store.dao.impl.StoreDaoImpl;
@@ -134,7 +135,8 @@ public class StoreAddressServiceImpl {
 					}
 					// 转换为 json 字符串
 					String available = Json.toJson(availables);
-					log.info("插入lfy_member_address 表中的配送门店字段 available ="+available);
+					log.info("插入lfy_member_address 表中的配送门店字段 available ="
+							+ available);
 					addressBean.setAvailable_shops(available); // 插入数据库
 
 					// `is_available` varchar(10) DEFAULT '0' COMMENT '是否可以配送
@@ -166,7 +168,7 @@ public class StoreAddressServiceImpl {
 					} else {
 						log.info("百度地图查询失败");
 					}
-					
+
 					this.storeDao.updateMemeberAddress(addressBean);
 				}
 
@@ -187,35 +189,108 @@ public class StoreAddressServiceImpl {
 		return Json.toJson(bean, JsonFormat.nice());
 	}
 
-	
-	//----------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------
 	/**
 	 * 接口三、根据门店编号，到数据库查询门店对象
-	 * @param storeCode  门店编号
+	 * 
+	 * @param storeCode
+	 *            门店编号
 	 * @return
 	 */
-	public String getStoreByStoreCode(String storeCode){
+	public String getStoreByStoreCode(String storeCode) {
 		StoreAddress store = this.storeDao.getStoreByStoreCode(storeCode);
-		
+
 		ReturnJsonBean bean = new ReturnJsonBean();
 		List<StoreAddress> list = new ArrayList<StoreAddress>();
-		if (store !=null ) {
+		if (store != null) {
 			bean.setStatus("200");
 			bean.setInfo("查询成功");
 			list.add(store);
 			bean.setResults(list);
-		}else {
+		} else {
 			bean.setStatus("404");
 			bean.setInfo("目前没有门店数据");
 			bean.setResults(list);
 		}
-		
+
 		return Json.toJson(bean, JsonFormat.nice());
-	} 
-	
-	
-	
-	
-	
-	
+	}
+
+	// ----------------------------------------------------------------------------
+	/**
+	 * 接口四、根据用户 IP，获取用户所在城市，及该城市所有门店详细信息
+	 * 
+	 * @param ip
+	 *            用户IP 地址
+	 * @return
+	 */
+	public String searchStoreByCityIP(String ip) {
+		ReturnJsonBean bean = new ReturnJsonBean();
+		// 根据城市查询数据库中所有门店
+		List<StoreAddress> list = null;
+		// 根据 IP 查询出来的城市或者省份
+		String province = "";
+		String city = "";
+
+		// 根据 IP 判断用户所在城市
+		String jsonResult = ""; // 要返回的 json 字符串
+		try {
+			jsonResult = baidu.getMapJsonByIPAddress(ip); // get 方法请求
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (!"".equals(jsonResult)) {
+
+			IPAddress ipbean = Json.fromJson(IPAddress.class, jsonResult);
+
+			if (ipbean != null) {
+				String status = ipbean.getStatus();
+				// ip 正确
+				if ("0".equals(status)) {
+					province = ipbean.getContent().getAddress_detail()
+							.getProvince();
+					city = ipbean.getContent().getAddress_detail().getCity();
+				}
+				// ip 错误
+				if ("2".equals(status)) {
+					bean.setStatus("404");
+					bean.setInfo("IP 错误，用户所在城市无法查出，默认用上海");
+					list = this.storeDao.getStoreByCity("上海市", "上海市");
+					bean.setProvince("上海市");
+					bean.setCity("上海市");
+					bean.setResults(list);
+					return Json.toJson(bean, JsonFormat.nice());
+				}
+			}
+		}
+
+		// 根据城市查询数据库中所有门店
+		list = this.storeDao.getStoreByCity(province, city);
+		if (list != null) {
+			bean.setStatus("200");
+			if (list.size() == 0) {
+				bean.setInfo("查询成功," + province + city + "目前没有门店数据，默认显示上海的数据");
+				list = this.storeDao.getStoreByCity("上海市", "上海市");
+				bean.setProvince("上海市");
+				bean.setCity("上海市");
+			} else {
+				bean.setInfo("查询成功," + province + city + "目前有门店数据");
+				bean.setProvince(province);
+				bean.setCity(city);
+			}
+
+			bean.setResults(list);
+		} else {
+			bean.setStatus("500");
+			bean.setInfo("数据库查询错误，无法查询出数据");
+			bean.setProvince("");
+			bean.setCity("");
+			bean.setResults(list);
+		}
+
+		return Json.toJson(bean, JsonFormat.nice());
+	}
+
 }
